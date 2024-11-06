@@ -1,11 +1,10 @@
 // Importacion de dependencia
 const mongoose = require("mongoose");
 
-const publication = new mongoose.Schema({
+const publicationSchema = new mongoose.Schema({
   id_donee: {
     type: Number,
     required: true,
-    unique: true,
   },
   title: {
     type: String,
@@ -26,12 +25,14 @@ const publication = new mongoose.Schema({
   blood_type: {
     type: String,
     required: true,
-    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
   },
   donors_number: {
     type: Number,
-    default: 0
+    default: 0,
   },
 });
 
-module.exports = publication;
+const Publication = mongoose.model("Publication", publicationSchema);
+
+module.exports = Publication;
