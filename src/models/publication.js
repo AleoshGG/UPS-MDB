@@ -5,6 +5,7 @@ const publicationSchema = new mongoose.Schema({
   id_donee: {
     type: Number,
     required: true,
+    unique: true
   },
   title: {
     type: String,
