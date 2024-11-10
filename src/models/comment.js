@@ -8,15 +8,13 @@ const commentSchema = new mongoose.Schema({
         unique: true
     },
     id_post: {
-        type: Number,
-        require: true,
-        ref: 'publication',
-        unique: true
-    },
-    username: {
         type: mongoose.Schema.Types.ObjectId,
         require: true,
-        unique: true
+        ref: 'Publication',
+    },
+    username: {
+        type: String,
+        require: true,
     },
     content: {
         type: String,

@@ -1,39 +1,55 @@
-const authenticateJWT = require("../config/authenticateJWT");
 const Publication = require("../models/publication");
 
-exports.addPublication = [
-  authenticateJWT,
-  async (req, res) => {
-    const publication = req.body;
+// Crear una nueva publicación
+exports.addPublication = async (req, res) => {
+  try {
+    const publication = new Publication(req.body);
+    await publication.save();
+    res.status(201).json(publication);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
-    try {
-      post = new Publication(publication);
-      await post.save();
+// Obtener todas las publicaciones
+exports.getAll = async (req, res) => {
+  try {
+    const publications = await Publication.find();
+    res.status(200).json(publications);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-      res.status(201).json({ msg: "Success" });
-    } catch (err) {
-      console.error(`Error has occurred: ${err}`);
-      res.status(500).json({
-        msg: "An error occurred while creating the publication",
-        error: err.message,
-      });
-    }
-  },
-];
+// Obtener una publicación por id
+exports.getPublicationById = async (req, res) => {
+  try {
+    const publication = await Publication.findById(req.params.id);
+    if (!publication) return res.status(404).json({ message: "Publicación no encontrada" });
+    res.status(200).json(publication);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-exports.getAll = [
-  authenticateJWT,
-  async (req, res) => {
-    try {
-      const posts = await Publication.find();
+// Actualizar una publicación por id
+exports.updatePublication = async (req, res) => {
+  try {
+    const publication = await Publication.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!publication) return res.status(404).json({ message: "Publicación no encontrada" });
+    res.status(200).json(publication);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
-      res.status(200).json(posts);
-    } catch (err) {
-      console.error(`Error has occurred: ${err}`);
-      res.status(500).json({
-        msg: "An error occurred while getting the publication",
-        error: err.message,
-      });
-    }
-  },
-];
+// Eliminar una publicación
+exports.deletePublication = async (req, res) => {
+  try {
+    const publication = await Publication.findByIdAndDelete(req.params.id);
+    if (!publication) return res.status(404).json({ message: "Publicación no encontrada" });
+    res.status(200).json({ message: "Publicación eliminada con éxito" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
