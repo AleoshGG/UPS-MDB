@@ -5,6 +5,7 @@ const publicationSchema = new mongoose.Schema({
   id_donee: {
     type: Number,
     required: true,
+    unique: true
   },
   title: {
     type: String,
@@ -31,6 +32,12 @@ const publicationSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment"
+    }
+  ]
 });
 
 const Publication = mongoose.model("Publication", publicationSchema);
