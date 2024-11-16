@@ -1,5 +1,11 @@
 // Importacion de dependencia
 const mongoose = require("mongoose");
+const os = require('os');
+const path = require('path');
+const fs = require('fs');
+const stream = require('stream');
+const driveService = require('../../configDrive');
+
 
 const publicationSchema = new mongoose.Schema({
   id_donee: {
