@@ -9,7 +9,9 @@ const {
   getAll,
   getPublicationById,
   updatePublication,
-  deletePublication
+  deletePublication,
+  downloadFromDrive,
+  uploadToDrive
 } = require("../controllers/postsController");
 
 router.post("/add", addPublication); 
