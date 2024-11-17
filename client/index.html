@@ -6,15 +6,22 @@
     <title>Mi chat</title>
     <script type="module">
       import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+      const user = "alexis";
 
-      const socket = io();
+      const socket = io({
+        auth: {
+          user: user,
+          serverOffset: 0,
+        },
+      });
       const form = document.getElementById("form");
       const input = document.getElementById("input");
       const messages = document.getElementById("messages");
 
-      socket.on("chat message", (msg) => {
-        const item = `<li>${msg}</li>`;
+      socket.on("chat message", (msg, serverOffset, user) => {
+        const item = `<li>${msg} : ${user}</li>`;
         messages.insertAdjacentHTML("beforeend", item);
+        socket.auth.serverOffset = serverOffset;
       });
 
       form.addEventListener("submit", (e) => {

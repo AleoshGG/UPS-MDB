@@ -6,24 +6,17 @@ const logger = require("morgan");
 const Socket = require("socket.io");
 const nodeHttp = require("node:http");
 const PORT = process.env.PORT;
+const socketHandler = require("./src/config/socketHandler");
 connection();
 
 //Creacion de la apicacion
 const app = express();
 const server = nodeHttp.createServer(app);
-const io = new Socket.Server(server);
-
-io.on("connection", (socket) => {
-  console.log("A user has conected");
-
-  socket.on("disconnect", () => {
-    console.log("Conexion cerrada");
-  });
-
-  socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
-  });
+const io = new Socket.Server(server, {
+  connectionStateRecovery: {},
 });
+
+socketHandler.socketHandler(io);
 
 app.use(logger("dev"));
 app.use(express.json());

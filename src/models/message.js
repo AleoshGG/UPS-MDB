@@ -1,18 +1,13 @@
-const { type } = require("express/lib/response");
 const mongoose = require("mongoose");
 
-const messageSchema = mongoose.Schema({
+const messageSchema = new mongoose.Schema({
+  user: {
+    type: String,
+    require: true,
+  },
   content: {
     type: String,
     required: true,
-  },
-  author: {
-    type: Number,
-    required: true,
-  },
-  date: {
-    type: Date,
-    default: Date.now(),
   },
 });
 
