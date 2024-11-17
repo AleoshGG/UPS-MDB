@@ -1,4 +1,4 @@
-const Message = require("../models/message");
+const { addMessage, getMessages } = require("../controllers/messageController");
 
 exports.socketHandler = (io) => {
   io.on("connection", async (socket) => {
@@ -10,22 +10,17 @@ exports.socketHandler = (io) => {
 
     socket.on("chat message", async (msg) => {
       const user = socket.handshake.auth.user;
-      const newMessage = new Message({
-        content: msg,
-        user: user,
-      });
       try {
-        await newMessage.save();
+        await addMessage(user, msg);
+        await io.emit("chat message", msg, user);
       } catch (err) {
         console.log(err);
       }
-      io.emit("chat message", msg, newMessage.id.toString(), user);
     });
 
     if (!socket.recovered) {
       try {
-        const id = socket.handshake.auth.serverOffset;
-        const messages = await Message.find();
+        const messages = await getMessages();
         messages.forEach((message) => {
           socket.emit("chat message", message.content, message.user);
         });
