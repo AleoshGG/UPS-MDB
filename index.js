@@ -6,6 +6,7 @@ const logger = require("morgan");
 const { Server } = require("socket.io");
 const nodeHttp = require("node:http");
 const { socketHandler } = require("./src/config/socketHandler");
+const cors = require("cors");
 
 // Importar las rutas
 const publicactionRouter = require("./src/routes/postsRouter");
@@ -18,10 +19,13 @@ connection();
 //Creacion de la apicacion
 const app = express();
 const server = nodeHttp.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {cors: {
+  origin: 'http://localhost:4200', // Especifica el origen permitido
+  methods: ['GET', 'POST'], // Métodos HTTP permitidos
+}});
 
 socketHandler(io);
-
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 

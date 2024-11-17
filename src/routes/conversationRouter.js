@@ -5,7 +5,7 @@ const {
   createConversation,
 } = require("../controllers/conversationController");
 
-router.get("/conversations/:userId", getConversations);
+router.get("/:userId", getConversations);
 router.post("/add", createConversation);
 
 module.exports = router;
