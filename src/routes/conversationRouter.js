@@ -8,9 +8,9 @@ const {
   getMessages,
 } = require("../controllers/conversationController");
 
-router.get("/donee/:userId", getChatsDonee);
-router.get("/donor/:userId", getChatsDonor);
+router.get("/donee", getChatsDonee);
+router.get("/donor", getChatsDonor);
 router.get("/:conversationId/messages", getMessages);
-router.post("", createConversation);
+router.post("/add/:id", createConversation);
 
 module.exports = router;
