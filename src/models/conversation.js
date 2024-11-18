@@ -1,15 +1,9 @@
 const mongoose = require("mongoose");
 
 const conversationSchema = new mongoose.Schema({
-  id_donee: {
-    type: Number,
+  participants: {
+    type: [String], // Almacena los IDs de los dos usuarios
     required: true,
-    unique: true,
-  },
-  id_donor: {
-    type: Number,
-    required: true,
-    unique: true,
   },
   messages: [
     {

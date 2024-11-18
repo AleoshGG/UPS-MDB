@@ -31,11 +31,13 @@ app.use(cors());
 const publicactionRouter = require("./src/routes/postsRouter");
 const commentRouter = require("./src/routes/commentRouter");
 const chatRouter = require("./src/routes/chatRouter");
+const conversationRouter = require("./src/routes/conversationRouter");
 
 // Declarar las rutas
 app.use("/publications", publicactionRouter);
 app.use("/comments", commentRouter);
 app.use("/chats", chatRouter);
+app.use("/conversations", conversationRouter);
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

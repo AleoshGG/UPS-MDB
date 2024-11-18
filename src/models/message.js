@@ -1,21 +1,22 @@
 const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema({
-  senderId: {
-    type: String, // Donor or Donee
-    require: true,
-  },
-  receiverId: {
-    type: String,
-    require: true,
-  },
   content: {
     type: String,
     required: true,
   },
-  date: {
+  senderId: {
+    type: String,
+    required: true,
+  },
+  timestamp: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
+  },
+  conversationId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Conversation",
+    required: true,
   },
 });
 

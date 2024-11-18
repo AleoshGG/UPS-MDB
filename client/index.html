@@ -2,53 +2,158 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mi chat</title>
-    <script type="module">
-      import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
-      const user = "alexis";
-
-      const socket = io({
-        auth: {
-          user: user,
-          serverOffset: 0,
-        },
-      });
-      const form = document.getElementById("form");
-      const input = document.getElementById("input");
-      const messages = document.getElementById("messages");
-
-      socket.on("chat message", (msg, user, serverOffset) => {
-        const item = `<li>${msg} : ${user}</li>`;
-        messages.insertAdjacentHTML("beforeend", item);
-        socket.auth.serverOffset = serverOffset;
-      });
-
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        if (input.value) {
-          socket.emit("chat message", input.value);
-          input.value = "";
-        }
-      });
-    </script>
+    <title>Chat en Tiempo Real</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      #conversation-list,
+      #chat-section {
+        margin-bottom: 20px;
+      }
+      #messages {
+        border: 1px solid #ddd;
+        padding: 10px;
+        height: 200px;
+        overflow-y: scroll;
+        margin-bottom: 10px;
+      }
+      #messages li {
+        list-style: none;
+        margin-bottom: 5px;
+      }
+    </style>
   </head>
   <body>
-    <h1>Chat de pruebas jeje</h1>
+    <h1>Chat en Tiempo Real</h1>
 
-    <section class="chatsito">
+    <form id="userIDForm">
+      <input type="text" id="user" placeholder="Ingresa tu usuario" />
+      <button type="submit">Ingresar</button>
+    </form>
+
+    <div id="conversation-list">
+      <h3>Mis Conversaciones</h3>
+      <ul id="conversations"></ul>
+    </div>
+
+    <div id="chat-section" style="display: none">
+      <h3>Conversación</h3>
       <ul id="messages"></ul>
-
-      <form id="form">
+      <form id="message-form">
         <input
           type="text"
-          id="input"
-          placeholder="Enviar mensaje"
-          autocomplete="fasle"
+          id="message-input"
+          placeholder="Escribe un mensaje..."
+          required
         />
         <button type="submit">Enviar</button>
       </form>
-    </section>
+    </div>
+
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script>
+      // Variables
+      const socket = io("http://localhost:3000"); // Cambia la URL si tu servidor está en otra dirección
+      let currentConversationId = null;
+
+      // Elementos del DOM
+      const conversationsList = document.getElementById("conversations");
+      const chatSection = document.getElementById("chat-section");
+      const messagesList = document.getElementById("messages");
+      const messageForm = document.getElementById("message-form");
+      const messageInput = document.getElementById("message-input");
+      const userIDForm = document.getElementById("userIDForm");
+      const userIDInput = document.getElementById("user");
+      let USER_ID;
+
+      userIDForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const user = userIDInput.value;
+        USER_ID = user;
+        console.log(user);
+
+        loadConversations(user);
+      });
+
+      // Cargar las conversaciones del usuario
+      async function loadConversations(user) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/conversations/${user}`
+          ); // Cambia USER_ID por el ID del usuario
+          const conversations = await response.json();
+
+          conversations.forEach((conversation) => {
+            const li = document.createElement("li");
+            li.textContent = `Conversación con: ${conversation.participants.join(
+              ", "
+            )}`;
+            li.addEventListener("click", () =>
+              joinConversation(conversation._id)
+            );
+            conversationsList.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Error al cargar las conversaciones:", error);
+        }
+      }
+
+      // Unirse a una conversación
+      function joinConversation(conversationId) {
+        currentConversationId = conversationId;
+        chatSection.style.display = "block";
+        messagesList.innerHTML = ""; // Limpiar mensajes anteriores
+
+        // Unirse a la sala de la conversación
+        socket.emit("joinConversation", conversationId);
+
+        // Cargar mensajes anteriores
+        fetch(`http://localhost:3000/conversations/${conversationId}/messages`)
+          .then((response) => response.json())
+          .then((messages) => {
+            messages.forEach((message) => {
+              displayMessage(message.content, message.senderId);
+            });
+          })
+          .catch((error) =>
+            console.error("Error al cargar los mensajes:", error)
+          );
+      }
+
+      // Mostrar un mensaje en el chat
+      function displayMessage(content, sender) {
+        const li = document.createElement("li");
+        li.textContent = `${sender}: ${content}`;
+        messagesList.appendChild(li);
+        messagesList.scrollTop = messagesList.scrollHeight; // Desplazar al último mensaje
+      }
+
+      // Enviar un mensaje
+      messageForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        if (messageInput.value.trim() && currentConversationId) {
+          const message = {
+            content: messageInput.value,
+            senderId: USER_ID, // Cambia USER_ID por el ID del usuario
+            conversationId: currentConversationId,
+          };
+
+          socket.emit("sendMessage", message); // Enviar el mensaje al servidor
+          messageInput.value = "";
+        }
+      });
+
+      // Escuchar mensajes nuevos
+      socket.on("newMessage", (message) => {
+        if (message.conversationId === currentConversationId) {
+          displayMessage(message.content, message.senderId);
+        }
+      });
+    </script>
   </body>
 </html>
