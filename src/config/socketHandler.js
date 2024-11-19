@@ -1,7 +1,6 @@
 const Message = require("../models/message");
 const Conversation = require("../models/conversation");
-
-const users = {};
+const { getUserIdToken } = require("../config/tokens");
 
 exports.socketHandler = (io) => {
   io.on("connection", async (socket) => {
@@ -15,6 +14,8 @@ exports.socketHandler = (io) => {
 
     // Enviar un mensaje
     socket.on("sendMessage", async ({ content, senderId, conversationId }) => {
+      senderId = getUserIdToken(senderId);
+
       try {
         // Crear y guardar el mensaje
         const newMessage = new Message({ content, senderId, conversationId });
@@ -35,6 +36,5 @@ exports.socketHandler = (io) => {
     socket.on("disconnect", () => {
       console.log("Un usuario se ha desconectado");
     });
-    
   });
 };

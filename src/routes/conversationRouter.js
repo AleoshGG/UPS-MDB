@@ -11,6 +11,6 @@ const {
 router.get("/donee", getChatsDonee);
 router.get("/donor", getChatsDonor);
 router.get("/:conversationId/messages", getMessages);
-router.post("/add/:id", createConversation);
+router.get("/add/:id", createConversation);
 
 module.exports = router;

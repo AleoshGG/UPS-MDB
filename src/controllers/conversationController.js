@@ -40,7 +40,8 @@ exports.createConversation = [
 
       if (conversation) {
         console.log("Conversación existente:", conversation);
-        return res.status(400).json({ msg: "Conversacion existente" });
+        return res.status(400).send("Conversacion existente");
+        // return res.status(400).json({ msg: "Conversacion existente" });
       }
 
       if (!conversation) {
@@ -52,6 +53,7 @@ exports.createConversation = [
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: "Error al crear la conversación" });
+      return;
     }
   },
 ];
@@ -108,9 +110,11 @@ exports.getMessages = [
 
     try {
       const messages = await Message.find({ conversationId });
-      res.status(200).json(messages);
+      return res.status(200).json(messages);
     } catch (err) {
-      res.status(500).json({ error: "Error al obtener los mensajes" });
+      console.log(err);
+
+      return res.status(500).json({ error: "Error al obtener los mensajes" });
     }
   },
 ];

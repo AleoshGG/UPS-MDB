@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const conversationSchema = new mongoose.Schema({
-  participants: {
+  participants: { 
     id_donor: {
       type: Number,
       require: true,
