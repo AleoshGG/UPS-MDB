@@ -1,40 +1,38 @@
-const conversationService = require("../services/conversationService");
+const Message = require("../models/message");
+const Conversation = require("../models/conversation");
 
-exports.socketHandler = async (io) => {
-  io.on("connection", (socket) => {
-    console.log("A user has conected: ", socket.id);
+exports.socketHandler = (io) => {
+  io.on("connection", async (socket) => {
+    console.log("A user has conected");
 
-    // Para crear una nueva conversacion
-    socket.on("newConversation", async ({ newConversation }) => {
+    // Unirse a una conversación
+    socket.on("joinConversation", (conversationId) => {
+      socket.join(conversationId);
+      console.log(`Usuario unido a la conversación: ${conversationId}`);
+    });
+
+    // Enviar un mensaje
+    socket.on("sendMessage", async ({ content, senderId, conversationId }) => {
+
       try {
-        const createConversation = await conversationService.addNewConversation(
-          newConversation
-        );
+        // Crear y guardar el mensaje
+        const newMessage = new Message({ content, senderId, conversationId });
+        await newMessage.save();
 
-        io.emit("newConversation", createConversation);
+        // Agregar el mensaje a la conversación
+        const conversation = await Conversation.findById(conversationId);
+        conversation.messages.push(newMessage._id);
+        await conversation.save();
+
+        // Emitir el mensaje a todos los usuarios en la conversación
+        io.to(conversationId).emit("newMessage", newMessage);
       } catch (err) {
-        console.log(err);
+        console.error("Error al enviar el mensaje:", err);
       }
     });
 
-    // Para entrar a la conversacion
-    socket.on("joinConversation", ({ id_conversation }) => {
-      socket.join(id_conversation);
-    });
-
-    // Nuevos mensajes
-    socket.on("newMessage", async ({ id_conversation, message }) => {
-      const updateConversation = await conversationService.addMessage(
-        id_conversation,
-        message
-      );
-
-      io.to(id_conversation).emit("message", updateConversation);
-    });
-
-    // Desconectado
     socket.on("disconnect", () => {
-      console.log("A user disconnected: ", socket.id);
+      console.log("Un usuario se ha desconectado");
     });
   });
 };
