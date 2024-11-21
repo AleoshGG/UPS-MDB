@@ -1,5 +1,6 @@
 // Importamos las dependencias
 require("dotenv").config();
+const cors = require('cors');
 const express = require("express");
 const connection = require("./src/config/config");
 const logger = require("morgan");
@@ -8,6 +9,8 @@ const nodeHttp = require("node:http");
 const PORT = process.env.PORT;
 const socketHandler = require("./src/config/socketHandler");
 const cors = require("cors");
+const PORT = process.env.PORT;
+
 connection();
 
 //Creacion de la apicacion
@@ -25,7 +28,7 @@ socketHandler.socketHandler(io);
 
 app.use(logger("dev"));
 app.use(express.json());
-app.use(cors());
+app.use(cors()); // Permite todas las solicitudes
 
 // Importar las rutas
 const publicactionRouter = require("./src/routes/postsRouter");
