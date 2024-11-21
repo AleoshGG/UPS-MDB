@@ -16,7 +16,7 @@ const server = nodeHttp.createServer(app);
 const io = new Socket.Server(server, {
   connectionStateRecovery: {},
   cors: {
-    origin: "http://localhost:4200", // Especifica el origen permitido
+    origin: "https://unidosporlasangre.integrador.xyz", // Especifica el origen permitido
     methods: ["GET", "POST"], // Métodos HTTP permitidos
   },
 });
