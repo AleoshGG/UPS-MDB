@@ -1,13 +1,15 @@
 // Importamos las dependencias
 require("dotenv").config();
+const cors = require('cors');
 const express = require("express");
-const connection = require("./src/config/config");
+const connection = require("./src/config/connetion");
 const logger = require("morgan");
-const Socket = require("socket.io");
+const { Server } = require("socket.io");
 const nodeHttp = require("node:http");
-const PORT = process.env.PORT;
 const socketHandler = require("./src/config/socketHandler");
 const cors = require("cors");
+const PORT = process.env.PORT;
+
 connection();
 
 //Creacion de la apicacion
@@ -25,7 +27,7 @@ socketHandler.socketHandler(io);
 
 app.use(logger("dev"));
 app.use(express.json());
-app.use(cors());
+app.use(cors()); // Permite todas las solicitudes
 
 // Importar las rutas
 const publicactionRouter = require("./src/routes/postsRouter");
@@ -38,6 +40,7 @@ app.use("/publications", publicactionRouter);
 app.use("/comments", commentRouter);
 app.use("/check", checkRouter);
 app.use("/conversations", conversationRouter);
+
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

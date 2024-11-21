@@ -4,17 +4,52 @@ const path = require('path');
 const fs = require('fs');
 const stream = require('stream');
 const driveService = require('../../configDrive');
+const { authenticateJWT, getUserIdToken } = require('../config/tokens'); 
 
-// Crear una nueva publicación
-exports.addPublication = async (req, res) => {
-  try {
-    const publication = new Publication(req.body);
-    await publication.save();
-    res.status(201).json(publication);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+
+// Controlador para agregar una publicación
+exports.addPublication = [
+  authenticateJWT,
+    // Middleware para autenticar al usuario antes de proceder
+  async (req, res) => {
+    try {
+
+      // Obtener el token del encabezado de autorización
+      const authHeader = req.headers.authorization;
+      console.log(authHeader)
+      
+      if (!authHeader) {
+        return res.status(401).send( 'No se ha proporcionado un token de autenticación.' );
+      }
+
+      // Extraer el token y obtener el id_donee (ID del usuario)
+      const token = authHeader.split(" ")[1];
+      const id_donee = getUserIdToken(token); // Decodificar el token para obtener el ID del usuario
+
+      if (!id_donee) {
+        return res.status(403).send('Token inválido o expirado. Inicia sesión nuevamente.' );
+      }
+
+      // Preparamos el objeto de la publicación con el id_donee obtenido
+      const publicationData = {
+        ...req.body,  // Tomamos todos los datos enviados en el cuerpo de la solicitud
+        id_donee,     // Asignamos el id_donee al campo de la publicación
+      };
+
+      // Creamos una nueva instancia del modelo Publication
+      const publication = new Publication(publicationData);
+      
+      // Guardamos la publicación en la base de datos
+      await publication.save();
+
+      // Respondemos con la publicación recién creada
+      res.status(201).json(publication);
+    } catch (error) {
+      console.error('Error al crear la publicación:', error);
+      res.status(400).json({ message: error.message });
+    }
   }
-};
+];
 
 // Obtener todas las publicaciones
 exports.getAll = async (req, res) => {
