@@ -1,6 +1,5 @@
 const Message = require("../models/message");
 const Conversation = require("../models/conversation");
-const { getUserIdToken } = require("../config/tokens");
 
 exports.socketHandler = (io) => {
   io.on("connection", async (socket) => {
@@ -14,7 +13,6 @@ exports.socketHandler = (io) => {
 
     // Enviar un mensaje
     socket.on("sendMessage", async ({ content, senderId, conversationId }) => {
-      senderId = getUserIdToken(senderId);
 
       try {
         // Crear y guardar el mensaje

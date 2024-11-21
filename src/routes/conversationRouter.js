@@ -10,7 +10,7 @@ const {
 
 router.get("/donee", getChatsDonee);
 router.get("/donor", getChatsDonor);
-router.get("/:conversationId/messages", getMessages);
+router.get("/messages/:conversationId", getMessages);
 router.get("/add/:id", createConversation);
 
 module.exports = router;
