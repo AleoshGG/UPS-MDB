@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const connection = require("./src/config/connetion");
 const logger = require("morgan");
-const { Server } = require("socket.io");
+const Socket = require("socket.io");
 const nodeHttp = require("node:http");
 const socketHandler = require("./src/config/socketHandler");
 const cors = require("cors");
@@ -17,7 +17,7 @@ const server = nodeHttp.createServer(app);
 const io = new Socket.Server(server, {
   connectionStateRecovery: {},
   cors: {
-    origin: "http://localhost:4200", // Especifica el origen permitido
+    origin: "http://localhost:4000", // Especifica el origen permitido
     methods: ["GET", "POST"], // Métodos HTTP permitidos
   },
 });
