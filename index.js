@@ -1,6 +1,5 @@
 // Importamos las dependencias
 require("dotenv").config();
-const cors = require('cors');
 const express = require("express");
 const connection = require("./src/config/connetion");
 const logger = require("morgan");
