@@ -12,6 +12,10 @@ const commentSchema = new mongoose.Schema({
         require: true,
         ref: 'Publication',
     },
+    id_donor: {
+        type: Number,
+        required: true,
+    },
     username: {
         type: String,
         require: true,

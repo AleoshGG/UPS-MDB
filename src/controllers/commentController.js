@@ -1,27 +1,50 @@
 const authenticateJWT = require("../config/authenticateJWT");
 const Comment = require("../models/comment");
+const { authenticateJWT, getUserIdToken } = require('../config/tokens'); 
+
 
 // Crear un comentario (requiere autenticación)
 exports.addComment = [
   authenticateJWT,
   async (req, res) => {
     try {
-      const { id_comment, id_post, username, content } = req.body;
+      // Obtener el token del encabezado de autorización
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).send('No se ha proporcionado un token de autenticación.');
+      }
 
+      // Extraer el token y obtener el id_donor (decodificar el token)
+      const token = authHeader.split(" ")[1];
+      const id_donor = getUserIdToken(token); // Decodificar el token para obtener el ID del donante
+
+      if (!id_donor) {
+        return res.status(403).send('Token inválido o expirado. Inicia sesión nuevamente.');
+      }
+
+      // Obtener datos del cuerpo de la solicitud
+      const { id_comment, id_post, content } = req.body;
+
+      // Crear el nuevo comentario incluyendo el id_donor
       const newComment = new Comment({
         id_comment,
         id_post,
-        username,
+        username: id_donor, // Ajustar si necesitas usar otro campo para almacenar el id_donor
         content,
       });
 
+      // Guardar el comentario en la base de datos
       await newComment.save();
+
+      // Responder con éxito
       res.status(201).json({ message: "Comentario agregado con éxito", newComment });
     } catch (error) {
+      console.error('Error al agregar el comentario:', error);
       res.status(500).json({ message: "Error al agregar el comentario", error });
     }
-  }
+  },
 ];
+
 
 // Obtener todos los comentarios de una publicación específica (requiere autenticación)
 exports.getCommentsByPost = [
