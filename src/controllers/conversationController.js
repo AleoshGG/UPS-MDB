@@ -118,3 +118,47 @@ exports.getMessages = [
     }
   },
 ];
+
+exports.deleteForDonors = [
+  authenticateJWT,
+  async (req, res) => {
+    const authHeader = req.headers.authorization;
+    let userId;
+
+    if (authHeader) {
+      const token = authHeader.split(" ")[1];
+      userId = getUserIdToken(token);
+    }
+
+    try {
+      const conversations = await Conversation.deleteMany({
+        $and: [{ "participants.id_donor": userId }],
+      }).populate("messages");
+      res.status(200).json({ msg: "Success" });
+    } catch (err) {
+      res.status(500).json({ error: "Error al elimininar las conversaciones" });
+    }
+  },
+];
+
+exports.deleteForDonees = [
+  authenticateJWT,
+  async (req, res) => {
+    const authHeader = req.headers.authorization;
+    let userId;
+
+    if (authHeader) {
+      const token = authHeader.split(" ")[1];
+      userId = getUserIdToken(token);
+    }
+
+    try {
+      const conversations = await Conversation.deleteMany({
+        $and: [{ "participants.id_donee": userId }],
+      }).populate("messages");
+      res.status(200).json({ msg: "Success" });
+    } catch (err) {
+      res.status(500).json({ error: "Error al elimininar las conversaciones" });
+    }
+  },
+];
