@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const multer = require('multer');
+const multer = require("multer");
 
 const upload = multer({
-    storage: multer.memoryStorage()
+  storage: multer.memoryStorage(),
 });
 
 const {
@@ -13,22 +13,23 @@ const {
   updatePublication,
   deletePublication,
   downloadFromDrive,
-  uploadToDrive
+  uploadToDrive,
+  deleteByDonee,
 } = require("../controllers/postsController");
 
-router.post("/add", addPublication); 
-router.get("/", getAll); 
-router.get("/:id", getPublicationById); 
-router.put("/:id", updatePublication); 
-router.delete("/:id", deletePublication); 
+router.post("/add", addPublication);
+router.get("/", getAll);
+router.get("/:id", getPublicationById);
+router.put("/:id", updatePublication);
+router.delete("/:id", deletePublication);
+router.delete("/allByDonee", deleteByDonee);
 
 //rutas para drive
 
 // Ruta para subir un archivo a Google Drive
-router.post('/upload', upload.single('file'), uploadToDrive);
+router.post("/upload", upload.single("file"), uploadToDrive);
 
 // Ruta para descargar un archivo desde Google Drive
-router.get('/download/:fileId', downloadFromDrive);
-
+router.get("/download/:fileId", downloadFromDrive);
 
 module.exports = router;

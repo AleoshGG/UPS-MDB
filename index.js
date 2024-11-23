@@ -17,8 +17,9 @@ const server = nodeHttp.createServer(app);
 const io = new Socket.Server(server, {
   connectionStateRecovery: {},
   cors: {
-    origin: "http://localhost:4000", // Especifica el origen permitido
-    methods: ["GET", "POST"], // Métodos HTTP permitidos
+    origin: ["http://localhost:4200"], // Especifica el origen permitido
+    methods: ["GET", "POST", "DELETE", "PUT"], // Métodos HTTP permitidos
+    credentials: true,
   },
 });
 
@@ -26,8 +27,12 @@ socketHandler.socketHandler(io);
 
 app.use(logger("dev"));
 app.use(express.json());
-app.use(cors()); // Permite todas las solicitudes
-
+app.use(
+  cors({
+    origin: ["http://localhost:4200"], // Agrega aquí los orígenes permitidos
+    credentials: true,
+  })
+);
 // Importar las rutas
 const publicactionRouter = require("./src/routes/postsRouter");
 const commentRouter = require("./src/routes/commentRouter");
@@ -39,7 +44,6 @@ app.use("/publications", publicactionRouter);
 app.use("/comments", commentRouter);
 app.use("/check", checkRouter);
 app.use("/conversations", conversationRouter);
-
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
