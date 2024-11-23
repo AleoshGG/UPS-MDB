@@ -1,4 +1,3 @@
-const { authenticateJWT } = require("../config/tokens");
 const Comment = require("../models/comment");
 const { authenticateJWT, getUserIdToken } = require('../config/tokens'); 
 
@@ -16,20 +15,20 @@ exports.addComment = [
 
       // Extraer el token y obtener el id_donor (decodificar el token)
       const token = authHeader.split(" ")[1];
-      const id_donor = getUserIdToken(token); // Decodificar el token para obtener el ID del donante
+      const id_donor = getUserIdToken(token);
+      console.log(id_donor); // Decodificar el token para obtener el ID del donante
 
       if (!id_donor) {
         return res.status(403).send('Token inválido o expirado. Inicia sesión nuevamente.');
       }
 
       // Obtener datos del cuerpo de la solicitud
-      const { id_comment, id_post, content } = req.body;
+      const { id_post, content } = req.body;
 
       // Crear el nuevo comentario incluyendo el id_donor
       const newComment = new Comment({
-        id_comment,
         id_post,
-        username: id_donor, // Ajustar si necesitas usar otro campo para almacenar el id_donor
+        id_donor: id_donor,
         content,
       });
 
