@@ -48,21 +48,22 @@ exports.addComment = [
   },
 ];
 
-// Obtener todos los comentarios de una publicación específica (requiere autenticación)
 exports.getCommentsByPost = [
   authenticateJWT,
   async (req, res) => {
     try {
       const { id_post } = req.params;
-      
-      const comments = await Comment.find({id_post});
 
-      if (!comments) {
+      const comments = await Comment.find({ id_post });
+
+      // Verificar si hay comentarios
+      if (!comments || comments.length === 0) {
         return res.status(404).json({
           message: "No se encontraron comentarios para esta publicación.",
         });
       }
 
+      // Responder con los comentarios encontrados
       res.status(200).json(comments);
     } catch (error) {
       res
