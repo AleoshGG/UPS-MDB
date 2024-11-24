@@ -6,12 +6,11 @@ exports.addComment = [
   authenticateJWT,
   async (req, res) => {
     try {
-      const { id_comment, id_post, username, content } = req.body;
+      const { id_post, id_donor, content } = req.body;
 
       const newComment = new Comment({
-        id_comment,
         id_post,
-        username,
+        id_donor,
         content,
       });
 
