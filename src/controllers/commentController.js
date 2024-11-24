@@ -1,6 +1,5 @@
 const Comment = require("../models/comment");
-const { authenticateJWT, getUserIdToken } = require('../config/tokens'); 
-
+const { authenticateJWT, getUserIdToken } = require("../config/tokens");
 
 // Crear un comentario (requiere autenticación)
 exports.addComment = [
@@ -10,7 +9,9 @@ exports.addComment = [
       // Obtener el token del encabezado de autorización
       const authHeader = req.headers.authorization;
       if (!authHeader) {
-        return res.status(401).send('No se ha proporcionado un token de autenticación.');
+        return res
+          .status(401)
+          .send("No se ha proporcionado un token de autenticación.");
       }
 
       // Extraer el token y obtener el id_donor (decodificar el token)
@@ -19,7 +20,9 @@ exports.addComment = [
       console.log(id_donor); // Decodificar el token para obtener el ID del donante
 
       if (!id_donor) {
-        return res.status(403).send('Token inválido o expirado. Inicia sesión nuevamente.');
+        return res
+          .status(403)
+          .send("Token inválido o expirado. Inicia sesión nuevamente.");
       }
 
       // Obtener datos del cuerpo de la solicitud
@@ -45,18 +48,14 @@ exports.addComment = [
   },
 ];
 
-
 // Obtener todos los comentarios de una publicación específica (requiere autenticación)
 exports.getCommentsByPost = [
   authenticateJWT,
   async (req, res) => {
     try {
       const { id_post } = req.params;
-
-      const comments = await Comment.find({ id_post }).populate(
-        "username",
-        "username"
-      );
+      
+      const comments = await Comment.find({id_post});
 
       if (!comments) {
         return res.status(404).json({
