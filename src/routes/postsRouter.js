@@ -15,13 +15,13 @@ const {
   downloadFromDrive,
   uploadToDrive,
   deleteByDonee,
-  getPublicationByIdDonee,
+  getByDonee,
 } = require("../controllers/postsController");
 
 router.post("/add", addPublication);
-router.get("/", getAll);
+router.get("/all", getAll);
 router.get("/:id", getPublicationById);
-router.get("/donee", getPublicationByIdDonee);
+router.get("/", getByDonee);
 router.put("/:id", updatePublication);
 router.delete("/:id", deletePublication);
 router.delete("/allByDonee", deleteByDonee);

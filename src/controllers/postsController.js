@@ -64,7 +64,7 @@ exports.getAll = async (req, res) => {
 };
 
 // Obtener una publicación por id_donee
-exports.getPublicationByIdDonee = [
+exports.getByDonee = [
   authenticateJWT,
   async (req, res) => {
     try {
