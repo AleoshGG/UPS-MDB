@@ -56,12 +56,46 @@ exports.addPublication = [
 // Obtener todas las publicaciones
 exports.getAll = async (req, res) => {
   try {
-    const publications = await Publication.find();
+    const publications = await Publication.find().limit(50);
     res.status(200).json(publications);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Obtener una publicación por id_donee
+exports.getPublicationByIdDonee = [
+  authenticateJWT,
+  async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      console.log(authHeader);
+
+      if (!authHeader) {
+        return res
+          .status(401)
+          .send("No se ha proporcionado un token de autenticación.");
+      }
+
+      // Extraer el token y obtener el id_donee (ID del usuario)
+      const token = authHeader.split(" ")[1];
+      const id_donee = getUserIdToken(token); // Decodificar el token para obtener el ID del usuario
+
+      if (!id_donee) {
+        return res
+          .status(403)
+          .send("Token inválido o expirado. Inicia sesión nuevamente.");
+      }
+
+      const publications = await Publication.find({id_donee});
+      console.log(publications);
+
+      res.status(200).json(publications);
+    } catch (error) {
+      res.status(500).json({ message: error });
+    }
+  },
+];
 
 // Obtener una publicación por id
 exports.getPublicationById = async (req, res) => {
