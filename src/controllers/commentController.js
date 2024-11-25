@@ -9,9 +9,7 @@ exports.addComment = [
       // Obtener el token del encabezado de autorización
       const authHeader = req.headers.authorization;
       if (!authHeader) {
-        return res
-          .status(401)
-          .send("No se ha proporcionado un token de autenticación.");
+        return res.status(401).send('No se ha proporcionado un token de autenticación.');
       }
 
       // Extraer el token y obtener el id_donor (decodificar el token)

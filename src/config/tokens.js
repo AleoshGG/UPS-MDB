@@ -20,10 +20,8 @@ exports.authenticateJWT = (req, res, next) => {
 
 exports.getUserIdToken = (token) => {
   try {
-    // Decodifica el token y obtiene el payload
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Devuelve el ID del usuario (ajusta 'userId' a tu clave de usuario)
     return decoded.sub;
   } catch (error) {
     console.error("Error al decodificar el token:", error);
