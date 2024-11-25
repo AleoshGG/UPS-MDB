@@ -87,7 +87,7 @@ exports.getByDonee = [
           .send("Token inválido o expirado. Inicia sesión nuevamente.");
       }
 
-      const publications = await Publication.find({id_donee});
+      const publications = await Publication.find({ id_donee });
       console.log(publications);
 
       res.status(200).json(publications);
@@ -126,16 +126,19 @@ exports.updatePublication = async (req, res) => {
 };
 
 // Eliminar una publicación
-exports.deletePublication = async (req, res) => {
-  try {
-    const publication = await Publication.findByIdAndDelete(req.params.id);
-    if (!publication)
-      return res.status(404).json({ message: "Publicación no encontrada" });
-    res.status(200).json({ message: "Publicación eliminada con éxito" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+exports.deletePublication = [
+  authenticateJWT,
+  async (req, res) => {
+    try {
+      const publication = await Publication.findByIdAndDelete(req.params.id);
+      if (!publication)
+        return res.status(404).json({ message: "Publicación no encontrada" });
+      res.status(200).json({ message: "Publicación eliminada con éxito" });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+];
 
 // Eliminar una publicación
 exports.deleteByDonee = [
@@ -201,6 +204,8 @@ exports.uploadToDrive = async (req, res) => {
 
     res.status(200).json({ fileId });
   } catch (error) {
+    console.log(error);
+    
     res.status(500).json({ error: "Error al subir el archivo" });
   }
 };

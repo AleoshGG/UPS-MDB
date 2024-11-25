@@ -154,3 +154,39 @@ exports.deleteComment = [
     }
   },
 ];
+
+exports.deleteAll = [
+  authenticateJWT,
+  async (req, res) => {
+    try {
+      // Obtener el token del encabezado de autorización
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res
+          .status(401)
+          .send("No se ha proporcionado un token de autenticación.");
+      }
+
+      // Extraer el token y obtener el id_donor (decodificar el token)
+      const token = authHeader.split(" ")[1];
+      const id_donor = getUserIdToken(token);
+      console.log(id_donor); // Decodificar el token para obtener el ID del donante
+
+      if (!id_donor) {
+        return res
+          .status(403)
+          .send("Token inválido o expirado. Inicia sesión nuevamente.");
+      }
+
+      const deletedComment = await Comment.deleteMany({ id_donor: id_donor });
+
+      res
+        .status(200)
+        .json({ message: "Comentario eliminado con éxito" });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error al eliminar el comentario", error });
+    }
+  },
+];
