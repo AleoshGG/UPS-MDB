@@ -17,7 +17,10 @@ const server = nodeHttp.createServer(app);
 const io = new Socket.Server(server, {
   connectionStateRecovery: {},
   cors: {
-    origin: ["http://localhost:4200"], // Especifica el origen permitido
+    origin: [
+      "https://unidosporlasangre.integrador.xyz",
+      "http://localhost:4200",
+    ], // Especifica el origen permitido
     methods: ["GET", "POST", "DELETE", "PUT"], // Métodos HTTP permitidos
     credentials: true,
   },
@@ -29,7 +32,10 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:4200"], // Agrega aquí los orígenes permitidos
+    origin: [
+      "https://unidosporlasangre.integrador.xyz",
+      "http://localhost:4200",
+    ], // Agrega aquí los orígenes permitidos
     credentials: true,
   })
 );
