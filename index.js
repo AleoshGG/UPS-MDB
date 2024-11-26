@@ -36,6 +36,7 @@ app.use(
       "https://unidosporlasangre.integrador.xyz",
       "http://localhost:4200",
     ], // Agrega aquí los orígenes permitidos
+    methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
 );
