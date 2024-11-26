@@ -24,7 +24,7 @@ router.get("/:id", getPublicationById);
 router.get("/", getByDonee);
 router.put("/:id", updatePublication);
 router.delete("/:id", deletePublication);
-router.delete("/allByDonee", deleteByDonee);
+router.delete("/", deleteByDonee);
 
 //rutas para drive
 
